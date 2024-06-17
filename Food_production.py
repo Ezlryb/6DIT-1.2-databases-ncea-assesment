@@ -58,6 +58,7 @@ def get_one_food():
         if should_break:
             break
         else:
+            os.system("clear")
             print("\n\nCheck for typos!")
 
     #all_foods is a list of all data
@@ -80,13 +81,13 @@ def get_one_food():
         
     
     
-     
+    os.system("clear")
     return readable_names
     
 #Returns all data sorted by a chosen feild
 def order_products():
     foods = get_all_names()
-    print("What would you like to order your informtion by?")
+    print("What would you like to order your informtion by?\n")
     thing = ""
     for i, thing in enumerate(get_all_fields()):
         print("(" + str(i+1) + ") " + thing)
@@ -101,15 +102,17 @@ def order_products():
                 print("Please enter a number between 1 and 9!")
         except ValueError:
             print("Please enter a number between 1 and 9!")
-    
+    os.system("clear")
     while True:
-        ascdec = input("Would you like to order your data in ascending/alphabetical order (1) or in descending/reverse alphabetical order? (2)\n\n> ")
+        
+        ascdec = input("Would you like to order your data in:\n\n(1) Ascending/alphabetical order\n(2) Descending/reverse alphabetical order \n\n> ")
         if ascdec == "1":
             ascdec = "ASC"
             break
         elif ascdec == "2":
             ascdec = "DESC"
             break
+        os.system("clear")
         print("Please enter 1 or 2!")
 
             
@@ -146,21 +149,23 @@ def read_names(data):
 #asks the user how they want to filter the data and outputs the filtered data
 def filter_foods(foods):
     #asks the user would like to filter by
-    print("What would you like to filter your informtion by?")
+    print("What would you like to filter your informtion by?\n")
 
     #prints out all information of the chosen item
     for i, foods in enumerate(get_all_fields()):
         print("(" + str(i+1) + ") " + foods)
 
     
-    #recevies the users answer for what they wnat to filster by and storses it in the filter_by variable
+    #recevies the users answer for what they wnat to filter by and storses it in the filter_by variable
     while True:
         filter_by = input("\n\n> ")
         #checks to see if the users input is an int and a valid number
         try:
-            if int(filter_by) >= 1 and int(filter_by) <= 9:
+            if int(filter_by) == 1 or int(filter_by) >= 3 and int(filter_by) <= 9:
                 feild = get_all_fields()[int(filter_by)-1]
                 break
+            elif int(filter_by) == 2:
+                print("You may not filter by name!")
             else:
                 
                 #runs if user input was not between 1 and 9
@@ -170,7 +175,7 @@ def filter_foods(foods):
         except ValueError:
             print("Please enter a number between 1 and 9!")
     
-    
+    os.system("clear")
     try:
         
         cursor.execute("SELECT " + get_all_fields()[int(filter_by)-1].lower() + " FROM AFP")
@@ -178,6 +183,8 @@ def filter_foods(foods):
 
         #finds the biggest and smallest values of the selected field
 
+        max = selected_values[0]
+        min = selected_values[0]
         for i in range(len(selected_values)):
             
             if min > selected_values[i]:
@@ -189,13 +196,14 @@ def filter_foods(foods):
         while True:
             try:
                 print("The lowest " + get_all_fields()[int(filter_by)-1].lower() + " is " + str(min)[1:-2])
+                print("The highest " + get_all_fields()[int(filter_by)-1].lower() + " is " + str(max)[1:-2])
                 min = float(input("\nWhat would you like the new minimum value to be?\n\n> "))
                 break
             except ValueError:
                 print("Please enter a number!")
         while True:
             try:
-                print("The highest " + get_all_fields()[int(filter_by)-1].lower() + " is " + str(max)[1:-2])
+                
                 max = float(input("\nWhat would you like the maximum value to be?\n\n> "))
                 break
             except ValueError:
@@ -335,8 +343,9 @@ def replace_data():
 def start():
     
     os.system("clear")
-    action = input("What would you like to do?\n\n(1) Show all data\n(2) Show all product names \n(3) Sort all data \n(4) Filter all data\n(5) Select one product \n(6) Replace data\n\n> ")
+    action = input("***** Menu *****\n\n(1) Show all data\n(2) Show all product names \n(3) Sort all data \n(4) Filter all data\n(5) Select one product \n(6) Replace data\n(7) End\n\n> ")
     os.system("clear")
+
     while True:
         try:
             os.system("clear")
@@ -360,11 +369,18 @@ def start():
 
             elif action.lower() in ["6", 'replace data']:
                 print(replace_data())
+
+            elif action.lower() in ["7", 'end']:
+                return False
+                
+
             
             else:
                 os.system("clear")
-                print("Please enter a number between 1 and 6!")
-                action = input("\n\nWhat would you like to do?\n\nShow all data(1)\nShow all product names(2)\nSort all data (3)\nFilter all data(4)\nSelect one product (5)\n\n> ")
+                
+                action = input("***** Menu *****\n\nPlease enter a number between 1 and 7!\n(1) Show all data\n(2) Show all product names \n(3) Sort all data \n(4) Filter all data\n(5) Select one product \n(6) Replace data\n(7) End\n\n> ")
+                
+                
                 
                 continue
                 
@@ -374,8 +390,12 @@ def start():
         except ValueError:
 
             print("Please enter a number!")
+    return True
 
-while True: start()
+loop = True
+while loop: loop = start()
 
+os.system("clear")
 connection.commit()
 connection.close()
+print("Thank you for using this program!")
